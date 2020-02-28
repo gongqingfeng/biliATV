@@ -1630,6 +1630,8 @@ function playBangumi(sid, videoInfo, quality=80)
 
 function openVideoWindow(aid, detail, imageURL, page, title, desc, isBangumi = null)
 {
+        var alert = new tvOS.template.alert('请问要重新加载应用程序吗？', detail, null,'此操作不可逆');
+        alert.presentModal();
 		let videoList = new DMPlaylist();
 		let video = new DMMediaItem('video', detail.durl[0].url);
 		video.url = detail.durl[0].url;
