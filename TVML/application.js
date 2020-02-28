@@ -1667,7 +1667,7 @@ function openVideoWindow(aid, detail, imageURL, page, title, desc, isBangumi = n
 }
 
 var SEC1 = '94aba54af9065f71de72f5508f1cd42e';
-var appkey = '84956560bc028eb7';
+var appkey = '27eb53fc9058f8c3'; //  84956560bc028eb7
 var api_url = 'http://interface.bilibili.com/v2/playurl?';
 var bangumi_api_url = 'http://bangumi.bilibili.com/player/web_api/playurl?';
 
