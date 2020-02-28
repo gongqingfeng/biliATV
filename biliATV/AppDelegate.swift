@@ -34,16 +34,10 @@ class AppDelegate: UIViewController, UIApplicationDelegate, TVApplicationControl
     
     
     // tvBaseURL points to a server on your local machine. To create a local server for testing purposes, use the following command inside your project folder from the Terminal app: ruby -run -ehttpd . -p9001. See NSAppTransportSecurity for information on using a non-secure server.
-//    static let tvBaseURL = "https://raw.githubusercontent.com/xioxin/biliATV/master/TVML"
-//    static let tvBaseURL = "https://coding.net/u/xin/p/biliATV/git/raw/master/TVML"
     static let tvBaseURL = "https://raw.githubusercontent.com/xioxin/biliATV/master/TVML"
+//    static let tvBaseURL = "https://coding.net/u/xin/p/biliATV/git/raw/master/TVML"
     
     static let tvBootURL = "\(AppDelegate.tvBaseURL)/application.js"
-
-    
-//
-//    static let tvBootURL = "\(AppDelegate.tvBaseURL)/application.js"
-//
 
     // MARK: Javascript Execution Helper
     
@@ -61,7 +55,7 @@ class AppDelegate: UIViewController, UIApplicationDelegate, TVApplicationControl
     
     // MARK: UIApplicationDelegate
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         window = UIWindow(frame: UIScreen.main.bounds)
 

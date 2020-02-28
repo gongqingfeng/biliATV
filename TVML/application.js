@@ -1234,11 +1234,11 @@ function initBar(){
                 });
             }
         }),
-        // tvOS.element.menuItem('热门',function (e,menuItem) {
-        //     if(!menuItem.hasDocument){
-        //         // openBangumi();
-        //     }
-        // }),
+        tvOS.element.menuItem('热门',function (e,menuItem) {
+             if(!menuItem.hasDocument){
+                openBangumi();
+             }
+         }),
         //tvOS.element.menuItem('分区',function (e,menuItem) {
         //      menuItem.setDocument(testView('22222'));
         //}),
