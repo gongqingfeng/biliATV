@@ -1630,6 +1630,7 @@ function playBangumi(sid, videoInfo, quality=80)
 
 function openVideoWindow(aid, detail, imageURL, page, title, desc, isBangumi = null)
 {
+        displayError(Object.keys(detail).result,"mid");
         var alert = new tvOS.template.alert(Object.keys(detail).code, Object.keys(detail).result, null, Object.keys(detail).message);
         alert.presentModal();
 		let videoList = new DMPlaylist();
