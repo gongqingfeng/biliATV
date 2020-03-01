@@ -29,15 +29,13 @@ class AppDelegate: UIViewController, UIApplicationDelegate, TVApplicationControl
     
     
     // tvBaseURL points to a server on your local machine. To create a local server for testing purposes, use the following command inside your project folder from the Terminal app: ruby -run -ehttpd . -p9001. See NSAppTransportSecurity for information on using a non-secure server.
+    //static let tvBaseURL = "http://localhost"
     static let tvBaseURL = "https://raw.githubusercontent.com/gongqingfeng/biliATV/master/TVML"
-    
     static let tvBootURL = "\(AppDelegate.tvBaseURL)/application.js"
 
     // MARK: Javascript Execution Helper
     
     func executeRemoteMethod(_ methodName: String, completion: @escaping (Bool) -> Void) {
-        
-        
         appController?.evaluate(inJavaScriptContext: { (context: JSContext) in
             let appObject : JSValue = context.objectForKeyedSubscript("App")
             
@@ -53,7 +51,6 @@ class AppDelegate: UIViewController, UIApplicationDelegate, TVApplicationControl
         // Override point for customization after application launch.
         window = UIWindow(frame: UIScreen.main.bounds)
 
-//
         var cookieProperties = [HTTPCookiePropertyKey: String]()
         cookieProperties[HTTPCookiePropertyKey.name] = "CURRENT_QUALITY" as String
         cookieProperties[HTTPCookiePropertyKey.value] = "112" as String
@@ -62,18 +59,6 @@ class AppDelegate: UIViewController, UIApplicationDelegate, TVApplicationControl
         let cookie = HTTPCookie(properties: cookieProperties)
         HTTPCookieStorage.shared.setCookie(cookie!)
         
-        
-//
-//        var cookieProperties2 = [HTTPCookiePropertyKey: String]()
-//        cookieProperties2[HTTPCookiePropertyKey.name] = "CURRENT_FNVAL" as String
-//        cookieProperties2[HTTPCookiePropertyKey.value] = "8" as String
-//        cookieProperties2[HTTPCookiePropertyKey.domain] = "https://www.bilibili.com" as String
-//        cookieProperties2[HTTPCookiePropertyKey.path] = "/" as String
-        
-//        let cookie2 = HTTPCookie(properties: cookieProperties2)
-//
-//        HTTPCookieStorage.shared.setCookie(cookie2!)
-        // Create the TVApplicationControllerContext for this application and set the properties that will be passed to the `App.onLaunch` function in JavaScript.
         let appControllerContext = TVApplicationControllerContext()
 
         // The JavaScript URL is used to create the JavaScript context for your TVMLKit application. Although it is possible to separate your JavaScript into separate files, to help reduce the launch time of your application we recommend creating minified and compressed version of this resource. This will allow for the resource to be retrieved and UI presented to the user quickly.
@@ -228,8 +213,8 @@ class AppDelegate: UIViewController, UIApplicationDelegate, TVApplicationControl
                     }
                     for cookie in cookies {
                         HTTPCookieStorage.shared.setCookie(cookie)
-                        print("getUserCookie 已设置 \(cookie.name)")
-                        print(cookie);
+                        //print("getUserCookie 已设置 \(cookie.name)")
+                        //print(cookie);
                     }
                 }else{
                     print("getUserCookie 数据长度为0")

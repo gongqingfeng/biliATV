@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		16055A651F285264000F3AF7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16055A641F285264000F3AF7 /* AppDelegate.swift */; };
 		16055A691F285264000F3AF7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 16055A681F285264000F3AF7 /* Assets.xcassets */; };
+		20A09FF1240A32F700A4D654 /* TVML in Resources */ = {isa = PBXBuildFile; fileRef = 20A09FF0240A32F700A4D654 /* TVML */; };
 		DC12AD871FE04B2E00041E95 /* MHURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC12AD861FE04B2E00041E95 /* MHURLProtocol.swift */; };
 		DCC008111FC095DE005F223C /* DanMuPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC8A10751FC0841E0021FF00 /* DanMuPlayer.framework */; };
 		DCC008121FC095DE005F223C /* DanMuPlayer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DC8A10751FC0841E0021FF00 /* DanMuPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -51,6 +52,7 @@
 		16055A641F285264000F3AF7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		16055A681F285264000F3AF7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		16055A6A1F285264000F3AF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		20A09FF0240A32F700A4D654 /* TVML */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TVML; sourceTree = "<group>"; };
 		DC12AD861FE04B2E00041E95 /* MHURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MHURLProtocol.swift; sourceTree = "<group>"; };
 		DC4769251FBC31AA00EC6FDD /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		DC4769271FBC31B500EC6FDD /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -93,6 +95,7 @@
 		16055A581F285264000F3AF7 = {
 			isa = PBXGroup;
 			children = (
+				20A09FF0240A32F700A4D654 /* TVML */,
 				DCF7B9FB1FC27E1C00FA6AA0 /* README.md */,
 				DCF7B9FC1FC2A2C500FA6AA0 /* LICENSE */,
 				16055A631F285264000F3AF7 /* biliATV */,
@@ -246,6 +249,7 @@
 			files = (
 				DCF7B9FD1FC2A2C600FA6AA0 /* LICENSE in Resources */,
 				16055A691F285264000F3AF7 /* Assets.xcassets in Resources */,
+				20A09FF1240A32F700A4D654 /* TVML in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

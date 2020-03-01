@@ -268,6 +268,7 @@ function timeline(setDocument) {
                 objectItem.description = `${result.pub_index} ${result.pub_time}`;
 
                 objectItem.onselect = function (e) {
+                    console.warn(e,result);
                     openBangumi(result.season_id);
                 };
                 index++;
@@ -287,10 +288,10 @@ function openSearchView(setDocument) {
     var page = tvOS.template.custom(`<document>
    <searchTemplate>
       <searchField keyboardTraits="alphanumeric" id="searchBox">在这里输入你想寻找的视频</searchField>
-        <button id="searchBtn">
-                <text>搜索</text>
-        </button>
-      <shelf>
+		<button id="searchBtn">
+				<text>搜索</text>
+		</button>
+	  <shelf>
          <header>
             <title>热搜</title>
          </header>
@@ -312,27 +313,27 @@ function openSearchView(setDocument) {
    </searchTemplate>
 </document>`);
     setDocument(page); 
-    
-    var searchField = page.view.getElementById("searchBox");
+	
+	var searchField = page.view.getElementById("searchBox");
     var keyboard = searchField.getFeature("Keyboard");
-    var searchText = "";
+	var searchText = "";
  
     keyboard.onTextChange = function() {
             searchText = keyboard.text;
             console.log("Search text changed " + searchText);
     }
-    
-    page.view.getElementById("searchBtn").addEventListener("select",function (e) {
+	
+	page.view.getElementById("searchBtn").addEventListener("select",function (e) {
         if(searchText != "")
-        {
-            searchResults(page, searchText);
-        }
+		{
+			searchResults(page, searchText);
+		}
     });
 }
 
 function searchResults(doc, s_keyword)
 {
-    openVideo(s_keyword, null, true);
+	openVideo(s_keyword, null, true);
 }
 
 function openLogin(callback=function () {}) {
@@ -397,9 +398,9 @@ function openDynamic() {
             if(data.code==0){
                 data = data.data;
                 let items = [];
-                var objectItem = false;
+				var objectItem = false;
                 try{
-                    data.forEach(function (d) {
+					data.forEach(function (d) {
                     if(d.type == 0){
                         objectItem = new DataItem('video', d.archive.aid);
                         objectItem.cover = d.archive.pic;
@@ -420,7 +421,7 @@ function openDynamic() {
                         objectItem = new DataItem('video', d.bangumi.aid);
                         objectItem.cover = d.bangumi.cover;
                         objectItem.title = d.bangumi.title;
-                        objectItem.onselect = function (e) {
+						objectItem.onselect = function (e) {
                             openBangumi(d.bangumi.season_id);
                         };
                         objectItem.class = '';
@@ -430,11 +431,11 @@ function openDynamic() {
                         console.warn("未知数据类型",d);
                     }
                     if(objectItem)items.push(objectItem);
-                    });
-                }
-                catch {
-                    
-                }
+					});
+				}
+				catch {
+					
+				}
                 callback(items);
             }else{
                 displayError(`加载错误 错误ID${data.code}`,)
@@ -462,10 +463,10 @@ function openUser(mid) {
     }
     var loading = tvOS.template.loading(`加载中...`);
     loading.display();
-    ajax.get(`https://api.bilibili.com/x/member/web/account`,function (data) {
+    ajax.get(`https://api.bilibili.com/cardrich?mid=${mid}`,function (data) {
         data = jsonParse(data);
         if(data.code == 0){
-            data = data.data;
+            data = data.data.card;
             var up = data;
 
             var regtime = new Date();
@@ -478,80 +479,81 @@ function openUser(mid) {
             if(data.nameplate){
                 nameplate = data.nameplate.name;
                 nameplate_icon = data.nameplate.image;
+                //image_small
             }
 
             var page = tvOS.template.custom('');
             page.xml = `<document>
-                                <productTemplate>
-                                <background>
-                                </background>
-                                <banner>
-                                    <infoList>
-                                        <info>
-                                            <header>
-                                                <title>UID</title>
-                                            </header>
-                                            <text>${data.mid}</text>
-                                        </info>
-                                        <info>
-                                            <header>
-                                                <title>性别</title>
-                                            </header>
-                                            <text>${data.sex}</text>
-                                        </info>
-                                        <info>
-                                            <header>
-                                                <title>位置</title>
-                                            </header>
-                                            <text>${data.place}</text>
-                                        </info>
-                                        <info>
-                                            <header>
-                                                <title>注册于</title>
-                                            </header>
-                                            <text>${regtime_text}</text>
-                                        </info>
-                                        <info>
-                                            <header>
-                                                <title>勋章</title>
-                                            </header>
-                                            <text>${nameplate}</text>
-                                        </info>
-                                    </infoList>
-                                    <stack>
-                                        <title>${data.name}</title>
-                                        <row>
-                                            <text>${data.sign}</text>
-                                        </row>
-                                        <description id="description_more"></description>
-                                        <row>
-                                            <buttonLockup id="follow_button">
-                                                <badge src="resource://button-rated" />
-                                                <title>大概没关注</title>
-                                            </buttonLockup>
-                                            
-                                            <buttonLockup>
-                                                <badge src="resource://button-preview" />
-                                                <title>视频</title>
-                                            </buttonLockup>
-                                            <buttonLockup>
-                                                <badge src="resource://button-rated" />
-                                                <title>专栏</title>
-                                            </buttonLockup>
-                                            <buttonLockup>
-                                                <badge src="resource://button-rated" />
-                                                <title>收藏</title>
-                                            </buttonLockup>
-                                            <buttonLockup>
-                                                <badge src="resource://button-rated" />
-                                                <title>订阅</title>
-                                            </buttonLockup>
-                                        </row>
-                                    </stack>
-                                    <heroImg src="${data.face}" />
-                                </banner>
-                            </productTemplate>
-                        </document>`;
+    <productTemplate>
+        <background>
+        </background>
+        <banner>
+            <infoList>
+                <info>
+                    <header>
+                        <title>UID</title>
+                    </header>
+                    <text>${data.mid}</text>
+                </info>
+                <info>
+                    <header>
+                        <title>性别</title>
+                    </header>
+                    <text>${data.sex}</text>
+                </info>
+                <info>
+                    <header>
+                        <title>位置</title>
+                    </header>
+                    <text>${data.place}</text>
+                </info>
+                <info>
+                    <header>
+                        <title>注册于</title>
+                    </header>
+                    <text>${regtime_text}</text>
+                </info>
+                <info>
+                    <header>
+                        <title>勋章</title>
+                    </header>
+                    <text>${nameplate}</text>
+                </info>
+            </infoList>
+            <stack>
+                <title>${data.name}</title>
+                <row>
+                    <text>${data.sign}</text>
+                </row>
+                <description id="description_more"></description>
+                <row>
+                    <buttonLockup id="follow_button">
+                        <badge src="resource://button-rated" />
+                        <title>大概没关注</title>
+                    </buttonLockup>
+                    
+                    <buttonLockup>
+                        <badge src="resource://button-preview" />
+                        <title>视频</title>
+                    </buttonLockup>
+                    <buttonLockup>
+                        <!--<badge src="resource://button-rated" />-->
+                        <title>专栏</title>
+                    </buttonLockup>
+                    <buttonLockup>
+                        <!--<badge src="resource://button-rated" />-->
+                        <title>收藏</title>
+                    </buttonLockup>
+                    <buttonLockup>
+                        <!--<badge src="resource://button-rated" />-->
+                        <title>订阅</title>
+                    </buttonLockup>
+                </row>
+            </stack>
+            <heroImg src="${data.face}" />
+        </banner>
+    </productTemplate>
+</document>`;
 
             test.uv = page.view;
             loading.replaceDocument(page);
@@ -647,22 +649,22 @@ function openUser(mid) {
                         if(!list)return
                         var shelf = page.view.createElement('shelf');
                         shelf.innerHTML = `
-                            <header>
-                                <title>${title}</title>
-                            </header>
-                            <prototypes>
-                                <lockup prototype="video">
-                                    <img binding="@src:{cover};" width="300" height="187"/>
-                                    <title style="font-size: 30;" binding="textContent:{title};" />
-                                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
-                                </lockup>
-                                <lockup prototype="video-more">
-                                    <img src="${tvBaseURL}/images/more400.png" width="187" height="187" />
-                                    <title style="font-size: 30;" binding="textContent:{title};" />
-                                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
-                                </lockup>
-                            </prototypes>
-                            <section id="${listKey}" binding="items:{${listKey}};" />`;
+            <header>
+                <title>${title}</title>
+            </header>
+            <prototypes>
+                <lockup prototype="video">
+                    <img binding="@src:{cover};" width="300" height="187"/>
+                    <title style="font-size: 30;" binding="textContent:{title};" />
+                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
+                </lockup>
+                <lockup prototype="video-more">
+                    <img src="${tvBaseURL}/images/more400.png" width="187" height="187" />
+                    <title style="font-size: 30;" binding="textContent:{title};" />
+                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
+                </lockup>
+            </prototypes>
+            <section id="${listKey}" binding="items:{${listKey}};" />`;
                         let section =  shelf.getElementsByTagName("section").item(0);
                         section.dataItem = new DataItem();
                         let datalist = list.map((av) => {
@@ -691,6 +693,8 @@ function openUser(mid) {
                     })
                 }
             });
+
+            // ajax.get(`https://api.bilibili.com/vipinfo/default?mid=${mid}&loginid=902845`)
 
             let follow_button = page.view.getElementById("follow_button");
             let follow_button_badge = follow_button.getElementsByTagName("badge").item(0);
@@ -730,10 +734,16 @@ function openUser(mid) {
                 }
             })
 
+
+
+
+
+            // test.uv.appendChild(test.uv.createElement('shelf'))
+
         }
     })
 }
-function openUserVideo(mid, title) {
+function openUserVideo(mid,title) {
     openVideoList(title,function (page,callback) {
         ajax.get(`https://space.bilibili.com/ajax/member/getSubmitVideos?mid=${mid}&page=${page}&pagesize=25`,function (data) {
             data = jsonParse(data);
@@ -797,180 +807,228 @@ function openUserChannelVideo(mid,cid,title) {
     //
 }
 function openBangumi(sid) {
-    //https://api.bilibili.com/pgc/view/web/season?season_id=${sid}
-    ajax.get(`https://api.bilibili.com/pgc/view/web/season?season_id=${sid}`, function (data) {
-    data = jsonParse(data);
-    if(data.code == 0) {
-        var result = data.result;
-        var page = tvOS.template.custom('');
+    ajax.get(`https://bangumi.bilibili.com/jsonp/seasoninfo/${sid}.ver?callback=seasonListCallback&jsonp=jsonp`,function (data) {
+        function seasonListCallback(data) {
+            if(data.code == 0){
+                var result = data.result;
+                console.log(result);
+                var page = tvOS.template.custom('');
 
-        var tags = "";
-        var actor = "";
-/*
-        result.tags.forEach(function (tag) {
-            tags+=`<textBadge>${tag.tag_name}</textBadge>`
-        });
-        result.actor.forEach(function (a) {
-            actor+=`<text>${a.actor}</text>`
-        });
+                var tags = "";
+                var actor = "";
 
-        var index_show = "";
-        if(result.media && result.media.episode_index && result.media.episode_index.index_show){
-            index_show = result.media.episode_index.index_show
-        }
-*/
-        page.xml = `<document>
-                        <productTemplate>
-                        <background>
-                        </background>
-                        <banner>
-                            <infoList>
-                                <info>
-                                    <header>
-                                        <title>番剧</title>
-                                    </header>
-                                </info>
-                            </infoList>
-                            <stack>
-                                <title>${result.title}</title>
-                                <row>
-                                    <text>${result.publish.pub_time}</text>
-                                </row>
-                                <description id="description_more" allowsZooming="true" moreLabel="more">${result.evaluate}
-                                </description>
-                                <row>
-                                    <buttonLockup id="play_button">
-                                        <badge src="resource://button-preview" />
-                                        <title>播放</title>
-                                    </buttonLockup>
-                                </row>
-                            </stack>
-                            <heroImg src="${result.cover}" />
-                        </banner>
-                        <shelf>
-                            <header>
-                                <title>剧集</title>
-                            </header>
-                            <prototypes>
-                                <lockup prototype="bangumi">
-                                    <img binding="@src:{cover};" width="300" height="187"/>
-                                    <title style="font-size: 30;" binding="textContent:{title};" />
-                                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
-                                </lockup>
-                            </prototypes>
-                            <section id="bangumi" binding="items:{bangumi};" />
-                        </shelf>
+                result.tags.forEach(function (tag) {
+                    tags+=`<textBadge>${tag.tag_name}</textBadge>`
+                });
+                result.actor.forEach(function (a) {
+                    actor+=`<text>${a.actor}</text>`
+                });
 
-                        <shelf>
-                            <header>
-                                <title>更多推荐</title>
-                            </header>
-                            <prototypes>
-                                <lockup prototype="moreVideo">
-                                    <img binding="@src:{cover};" width="250" height="333"/>
-                                    <title style="font-size: 30;" binding="textContent:{title};" />
-                                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
-                                </lockup>
-                            </prototypes>
-                            <section id="moreVideo" binding="items:{moreVideo};" />
-                        </shelf>
-                        <shelf>
-                            <header>
-                                <title>相关视频</title>
-                            </header>
-                            <prototypes>
-                                <lockup prototype="tagVideo">
-                                    <img binding="@src:{cover};" width="300" height="187"/>
-                                    <title style="font-size: 30;" binding="textContent:{title};" />
-                                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
-                                </lockup>
-                            </prototypes>
-                            <section id="tagVideo" binding="items:{tagVideo};" />
-                        </shelf>
-                        </productTemplate>
-                        </document>`;
+                var index_show = "";
+                if(result.media && result.media.episode_index && result.media.episode_index.index_show){
+                    index_show = result.media.episode_index.index_show
+                }
 
-        page.view.getElementById("description_more").addEventListener("select",function (e) {
-            let desc = tvOS.template.descriptiveAlert([result.bangumi_title,result.jp_title],'',`${index_show}\r\n\r\n${result.evaluate}\r\n\r\n${result.staff}`);
-            // desc.background = result.cover;
-            desc.presentModal();
-            // tvOS.template.compilation(result.bangumi_title,result.jp_title,`${result.evaluate}\r\n${result.staff}`).display();
-        });
-        page.view.getElementById("play_button").addEventListener("select",function (e) {
-            playBangumi(sid, result.episodes[0], getQualityApiValue(getUserSettings("Video_Quality")));
-        });
-        var bangumiSection = page.view.getElementById("bangumi")
-        bangumiSection.dataItem = new DataItem();
-        bangumiSection.dataItem.setPropertyPath("bangumi", result.episodes.map((av) => {
-            let objectItem = new DataItem('bangumi', av.aid);
-            objectItem.cover = av.cover;
-            objectItem.title = av.title;
-            objectItem.description = `第${av.title}话`;
-            objectItem.onselect = function (e) {
-                playBangumi(sid, av, getQualityApiValue(getUserSettings("Video_Quality")));
-            };
-            return objectItem;
-        }));
-        page.display();
+                page.xml = `<document>
+    <productTemplate>
+        <background>
+        </background>
+        <banner>
+            <infoList>
+                <info>
+                    <header>
+                        <title>Actor</title>
+                    </header>
+                    ${actor};
+                </info>
+            </infoList>
+            <stack>
+                <title>${result.bangumi_title}</title>
+                <row>
+                    <text>${result.pub_time}</text>
+                    <text>${index_show}</text>
+                    ${tags}
+                </row>
+                <description id="description_more" allowsZooming="true" moreLabel="more">${result.evaluate}
+                ${result.staff}</description>
+                <row>
+                    <buttonLockup id="play_button">
+                        <badge src="resource://button-preview" />
+                        <title>播放</title>
+                    </buttonLockup>
+                </row>
+            </stack>
+            <heroImg src="${result.cover}" />
+        </banner>
+        <shelf>
+            <header>
+                <title>剧集</title>
+            </header>
+            <prototypes>
+                <lockup prototype="bangumi">
+                    <img binding="@src:{cover};" width="300" height="187"/>
+                    <title style="font-size: 30;" binding="textContent:{title};" />
+                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
+                </lockup>
+            </prototypes>
+            <section id="bangumi" binding="items:{bangumi};" />
+        </shelf>
+        <shelf>
+            <header>
+                <title>承包榜 7日</title>
+            </header>
+            <prototypes>
+                <lockup prototype="tuhao" style="border-radius: circle;">
+                    <img style="border-radius: circle;" binding="@src:{cover};" width="150" height="150"/>
+                    <title style="font-size: 30;" binding="textContent:{title};" />
+                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
+                </lockup>
+            </prototypes>
+            <section id="tuhao" binding="items:{tuhao};" />
+        </shelf>
+        <shelf>
+            <header>
+                <title>更多推荐</title>
+            </header>
+            <prototypes>
+                <lockup prototype="moreVideo">
+                    <img binding="@src:{cover};" width="250" height="333"/>
+                    <title style="font-size: 30;" binding="textContent:{title};" />
+                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
+                </lockup>
+            </prototypes>
+            <section id="moreVideo" binding="items:{moreVideo};" />
+        </shelf>
+        <shelf>
+            <header>
+                <title>相关视频</title>
+            </header>
+            <prototypes>
+                <lockup prototype="tagVideo">
+                    <img binding="@src:{cover};" width="300" height="187"/>
+                    <title style="font-size: 30;" binding="textContent:{title};" />
+                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
+                </lockup>
+            </prototypes>
+            <section id="tagVideo" binding="items:{tagVideo};" />
+        </shelf>
+    </productTemplate>
+</document>`;
 
-        //加载相关视频
-        ajax.get("https://api.bilibili.com/x/tag/info?tag_name="+encodeURI(result.title),function (tagData) {
-            tagData = jsonParse(tagData);
-            console.log('tagData',tagData);
-            if(tagData.code == 0){
-                let tagId  = tagData.data.tag_id;
-                ajax.get(`https://api.bilibili.com/x/web-interface/tag/top?pn=1&ps=30&tid=${tagId}`,function (tagVideo) {
-                    tagVideo = jsonParse(tagVideo);
-                    console.log('tagVideo',tagVideo);
-                    if(tagVideo.code == 0){
-                        tagVideo = tagVideo.data;
-                        var tagVideoSection = page.view.getElementById("tagVideo");
-                        tagVideoSection.dataItem = new DataItem();
-                        tagVideoSection.dataItem.setPropertyPath("tagVideo", tagVideo.map((av) => {
-                            let objectItem = new DataItem('tagVideo', av.aid);
-                            objectItem.cover = av.pic;
-                            objectItem.title = av.title;
-                            var up = '';
-                            if(av.owner && av.owner.name){
-                                up = av.owner.name;
+                page.view.getElementById("description_more").addEventListener("select",function (e) {
+                    let desc = tvOS.template.descriptiveAlert([result.bangumi_title,result.jp_title],'',`${index_show}\r\n\r\n${result.evaluate}\r\n\r\n${result.staff}`);
+                    // desc.background = result.cover;
+                    desc.presentModal();
+                    // tvOS.template.compilation(result.bangumi_title,result.jp_title,`${result.evaluate}\r\n${result.staff}`).display();
+                });
+                page.view.getElementById("play_button").addEventListener("select",function (e) {
+					playBangumi(sid, result.episodes[0], getQualityApiValue(getUserSettings("Video_Quality")));
+                });
+                var bangumiSection = page.view.getElementById("bangumi")
+                bangumiSection.dataItem = new DataItem();
+                bangumiSection.dataItem.setPropertyPath("bangumi", result.episodes.map((av) => {
+                    let objectItem = new DataItem('bangumi', av.av_id);
+                    objectItem.cover = av.cover;
+                    objectItem.title = av.index_title;
+                    objectItem.description = `第${av.index}话`;
+                    if(av.is_new){
+                        objectItem.description = `NEW 第${av.index}话`;
+                    }
+                    objectItem.onselect = function (e) {
+                        playBangumi(sid, av, getQualityApiValue(getUserSettings("Video_Quality")));
+                    };
+                    return objectItem;
+                }));
+
+
+
+                page.display();
+
+
+
+                //加载相关视频
+                ajax.get("https://api.bilibili.com/x/tag/info?tag_name="+encodeURI(result.title),function (tagData) {
+                    tagData = jsonParse(tagData);
+                    console.log('tagData',tagData);
+                    if(tagData.code == 0){
+                        let tagId  = tagData.data.tag_id;
+                        ajax.get(`https://api.bilibili.com/x/web-interface/tag/top?pn=1&ps=30&tid=${tagId}`,function (tagVideo) {
+                            tagVideo = jsonParse(tagVideo);
+                            console.log('tagVideo',tagVideo);
+                            if(tagVideo.code == 0){
+                                tagVideo = tagVideo.data;
+                                var tagVideoSection = page.view.getElementById("tagVideo");
+                                tagVideoSection.dataItem = new DataItem();
+                                tagVideoSection.dataItem.setPropertyPath("tagVideo", tagVideo.map((av) => {
+                                    let objectItem = new DataItem('tagVideo', av.aid);
+                                    objectItem.cover = av.pic;
+                                    objectItem.title = av.title;
+                                    var up = '';
+                                    if(av.owner && av.owner.name){
+                                        up = av.owner.name;
+                                    }
+
+                                    objectItem.description = `UP:${up}  T:${av.tname}`;
+                                    objectItem.onselect = function (e) {
+                                        openVideo(av.aid*1, av.title, true);
+                                    };
+                                    objectItem.onholdselect = function (e) {
+                                        openVideo(av.aid, av.title);
+                                    };
+                                    return objectItem;
+                                }));
                             }
+                        })
+                    }
+                })
 
-                            objectItem.description = `UP:${up}  T:${av.tname}`;
+                //加载土豪
+                ajax.get(`https://bangumi.bilibili.com/sponsor/rankweb/get_sponsor_week_list?season_id=${sid}&pagesize=7`,function (tuhao) {
+                    tuhao = jsonParse(tuhao);
+                    if(tuhao.code == 0){
+                        console.log("tuhao",tuhao);
+                        tuhao = tuhao.result;
+                        var tuhaoList = tuhao.list;
+
+                        var tuhaoSection = page.view.getElementById("tuhao");
+                        tuhaoSection.dataItem = new DataItem();
+                        tuhaoSection.dataItem.setPropertyPath("tuhao", tuhaoList.map((tuhao) => {
+                            let objectItem = new DataItem('tuhao', tuhao.uid);
+                            objectItem.cover = tuhao.face;
+                            objectItem.title = tuhao.uname;
                             objectItem.onselect = function (e) {
-                                openVideo(av.aid*1, av.title, true);
-                            };
-                            objectItem.onholdselect = function (e) {
-                                openVideo(av.aid, av.title);
+                                openUser(tuhao.uid);
                             };
                             return objectItem;
                         }));
                     }
                 })
-            }
-        }) 
+                //加载更多推荐
+                ajax.get(`https://bangumi.bilibili.com/web_api/season/recommend/${sid}.json`,function (more) {
+                    more = jsonParse(more);
+                    if(more.code == 0){
+                        // console.log("tuhao",more);
+                        more = more.result.list;
+                        var moreSection = page.view.getElementById("moreVideo");
+                        moreSection.dataItem = new DataItem();
+                        moreSection.dataItem.setPropertyPath("moreVideo", more.map((video) => {
+                            let objectItem = new DataItem('moreVideo', video.season_id);
+                            objectItem.cover = video.cover;
+                            objectItem.title = video.title;
+                            objectItem.onselect = function (e) {
+                                openBangumi(video.season_id);
+                            };
+                            return objectItem;
+                        }));
+                    }
+                })
 
-        //加载更多推荐  https://bangumi.bilibili.com/web_api/season/recommend/${sid}.json
-        ajax.get(`https://api.bilibili.com/pgc/web/recommend/related/recommend?season_id=${sid}&from_pc=1`,function (more) {
-            more = jsonParse(more);
-            if(more.code == 0){
-                more = more.result.season;
-                var moreSection = page.view.getElementById("moreVideo");
-                moreSection.dataItem = new DataItem();
-                moreSection.dataItem.setPropertyPath("moreVideo", more.map((video) => {
-                    let objectItem = new DataItem('moreVideo', video.season_id);
-                    objectItem.cover = video.cover;
-                    objectItem.title = video.title;
-                    objectItem.onselect = function (e) {
-                        openBangumi(video.season_id);
-                    };
-                    return objectItem;
-                }));
             }
-        })
-    }
+        }
+        eval(data);
     })
 }
-function openVideoList(title, pageProcessing, prototypes='') {
+function openVideoList(title,pageProcessing,prototypes='') {
     if(!prototypes)prototypes = `<lockup prototype="video">
     <img binding="@src:{cover};" width="200" height="300"/>
     <title binding="textContent:{title};" />
@@ -1029,43 +1087,44 @@ function openVideoList(title, pageProcessing, prototypes='') {
 
 
 
-function openVideo(aid, displayName=null, notAutoPlay=0, loadingView=null) {
+function openVideo(aid, displayName=null,notAutoPlay=0,loadingView=null) {
     var loading;
     if (loadingView) {
         loading = loadingView;
     }
     else {
-        var displayStr = `加载 AV${aid}`; 
-        if(displayName != null)
-        {
-            displayStr = displayName;
-        }
-        loading = tvOS.template.loading(displayStr);
+		var displayStr = `加载 AV${aid}`;	
+		if(displayName != null)
+		{
+			displayStr = displayName;
+		}
+		loading = tvOS.template.loading(displayStr);
         loading.display();
     }
 
-    getAvData(aid, 1, function (data) {
-        if(data.isBangumi == true)
-        {
-            openBangumi(data.seasonID);
-            loading.removeDocument();
-            return;
-        }
-        
-        var video = data;
+    getAvData(aid,1,function (data) {
+		if(data.isBangumi == true)
+		{
+			openBangumi(data.seasonID);
+			loading.removeDocument();
+			return;
+		}
+		
+		var video = data;
+		console.warn(data);
 
-        if (data.error_msg && data.error_msg.length) {
-            loading.view.getElementsByTagName("title").item(0).innerHTML = `加载失败，重新加载 AV${aid}`;
-            openVideo(aid, displayName, notAutoPlay, loading);
-            return;
-        }
+		if (data.error_msg && data.error_msg.length) {
+			loading.view.getElementsByTagName("title").item(0).innerHTML = `加载失败，重新加载 AV${aid}`;
+			openVideo(aid, displayName, notAutoPlay, loading);
+			return;
+		}
 
-        if(notAutoPlay==0 && data.part.length == 1){ //直接到播放界面
-            loading.removeDocument();
-            playVideo(data, 0, getQualityApiValue(getUserSettings("Video_Quality")));
-            return;
-        }
-        var page = tvOS.template.custom(`<document>
+		if(notAutoPlay==0 && data.part.length == 1){
+			loading.removeDocument();
+			playVideo(data, 0, getQualityApiValue(getUserSettings("Video_Quality")));
+			return;
+		}
+		var page = tvOS.template.custom(`<document>
     <productTemplate>
         <background>
         </background>
@@ -1108,7 +1167,7 @@ function openVideo(aid, displayName=null, notAutoPlay=0, loadingView=null) {
                         <title>播放</title>
                     </buttonLockup>
                     <buttonLockup id="up_button">
-                        <badge src="resource://button-artist"/>
+                        <image src="resource://button-artist"/>
                         <title>${data.cardrich.name}</title>
                     </buttonLockup>
                 </row>
@@ -1131,41 +1190,51 @@ function openVideo(aid, displayName=null, notAutoPlay=0, loadingView=null) {
     </productTemplate>
 </document>`);
 
-        page.view.getElementById("play_button").addEventListener("select",function (e) {
-            playVideo(data, 0, getQualityApiValue(getUserSettings("Video_Quality")));
-        });
-        page.view.getElementById("up_button").addEventListener("select",function (e) {
-            openUser(data.cardrich.mid);
-        });
+		console.log(data.cardrich.face);
 
-        var section = page.view.getElementById("video")
-        section.dataItem = new DataItem();
-        section.dataItem.setPropertyPath("video", data.part.map((p) => {
-            let objectItem = new DataItem('video', p.page);
-            objectItem.cover = video.wb_img;
-            objectItem.title = p.name;
-            objectItem.description = `P${p.page}`;
-            objectItem.onselect = function (e){
-                playVideo(data, p.page-1, getQualityApiValue(getUserSettings("Video_Quality")));
-            };
-                return objectItem;
-        }));
-        loading.replaceDocument(page);
+		page.view.getElementById("play_button").addEventListener("select",function (e) {
+			playVideo(data, 0, getQualityApiValue(getUserSettings("Video_Quality")));
+		});
+		page.view.getElementById("up_button").addEventListener("select",function (e) {
+			openUser(data.cardrich.mid);
+		});
+
+		var section = page.view.getElementById("video")
+		section.dataItem = new DataItem();
+		section.dataItem.setPropertyPath("video", data.part.map((p) => {
+			let objectItem = new DataItem('video', p.page);
+			objectItem.cover = video.wb_img;
+			objectItem.title = p.name;
+			objectItem.description = `P${p.page}`;
+			objectItem.onselect = function (e){
+				playVideo(data, p.page-1, getQualityApiValue(getUserSettings("Video_Quality")));
+			};
+				return objectItem;
+		}));
+		loading.replaceDocument(page);
     });
 }
 
 function initBar(){
     var bar = tvOS.template.menuBar([
-        tvOS.element.menuItem('首页',function (e,menuItem) {
+		tvOS.element.menuItem('首页',function (e,menuItem) {
             
         }),
-        tvOS.element.menuItem('番剧',function (e,menuItem) {
+        tvOS.element.menuItem('追番',function (e,menuItem) {
             if(!menuItem.hasDocument){
-                timeline(function (v){
+                timeline(function (v) {
                     menuItem.setDocument(v);
                 });
             }
         }),
+        //tvOS.element.menuItem('热门',function (e,menuItem) {
+        //     if(!menuItem.hasDocument){
+        //        openBangumi();
+        //     }
+        // }),
+        //tvOS.element.menuItem('分区',function (e,menuItem) {
+        //      menuItem.setDocument(testView('22222'));
+        //}),
         tvOS.element.menuItem('搜索',function (e,menuItem) {
             if(!menuItem.hasDocument){
                 openSearchView(function (v){
@@ -1173,16 +1242,16 @@ function initBar(){
                 });
             }
         }),
-        tvOS.element.menuItem('我的',function (e,menuItem) {
+		tvOS.element.menuItem('我的',function (e,menuItem) {
             if(!menuItem.hasDocument){
                 myHome(function (v) {
                     menuItem.setDocument(v);
                 });
             }
         }),
-        tvOS.element.menuItem('设置',function (e,menuItem) {
+		tvOS.element.menuItem('设置',function (e,menuItem) {
             if(!menuItem.hasDocument){
-                openSettingsView(function (v) {
+				openSettingsView(function (v) {
                     menuItem.setDocument(v);
                 });
             }
@@ -1193,13 +1262,14 @@ function initBar(){
 }
 
 function openSettingsView(setDocument){
-    var getDefaultQuality = getUserSettings("Video_Quality");
-    if(getDefaultQuality == "")
-    {
-        getDefaultQuality = "3";
-        saveUserSettings("Video_Quality", getDefaultQuality);
-    }
-    
+	
+	var getDefaultQuality = getUserSettings("Video_Quality");
+	if(getDefaultQuality == "")
+	{
+		getDefaultQuality = "3";
+		saveUserSettings("Video_Quality", getDefaultQuality);
+	}
+	
     var settingsPage = tvOS.template.custom(`<document>
    <listTemplate>
       <banner>
@@ -1209,7 +1279,7 @@ function openSettingsView(setDocument){
          <section>
             <listItemLockup id="setBtn_playQuality">
                <title>播放</title>
-               <subtitle id="setBtn_playQuality_current">清晰度：${getQualityStr(getDefaultQuality)}</subtitle>
+			   <subtitle id="setBtn_playQuality_current">清晰度：${getQualityStr(getDefaultQuality)}</subtitle>
                <relatedContent>
                   <lockup>
                      <title>播放清晰度</title>
@@ -1217,7 +1287,7 @@ function openSettingsView(setDocument){
                   </lockup>
                </relatedContent>
             </listItemLockup>
-            <listItemLockup id="setBtn_debug">
+			<listItemLockup id="setBtn_debug">
                <title>调试</title>
                <relatedContent>
                   <lockup>
@@ -1240,29 +1310,29 @@ function openSettingsView(setDocument){
    </listTemplate>
 </document>`);
 
-    settingsPage.view.getElementById("setBtn_playQuality").addEventListener("select",function (e) {
-        changeVideoQuality(function (s) {
+	settingsPage.view.getElementById("setBtn_playQuality").addEventListener("select",function (e) {
+		changeVideoQuality(function (s) {
             if(s){
                 openSettingsView(setDocument);
             }
         });
-    });
-    
-    settingsPage.view.getElementById("setBtn_debug").addEventListener("select",function (e) {
-        reloadView();
-    });
-    
-    settingsPage.view.getElementById("setBtn_about").addEventListener("select",function (e) {
-            
-    });
+	});
+	
+	settingsPage.view.getElementById("setBtn_debug").addEventListener("select",function (e) {
+		reloadView();
+	});
+	
+	settingsPage.view.getElementById("setBtn_about").addEventListener("select",function (e) {
+			
+	});
 
-    setDocument(settingsPage); 
+	setDocument(settingsPage); 
 }
 
 function reloadView(){
     let button = new tvOS.element.button('好',function () {
-        App.reload({});
-    });
+		App.reload({});
+	});
     var alert = new tvOS.template.alert('请问要重新加载应用程序吗？','按下此按钮将会将应用程序全部重新初始化，所有未保存的内容将会丢失。',button,'此操作不可逆');
     alert.presentModal();
 }
@@ -1283,62 +1353,62 @@ function testView(testInfo){
 
 function getQualityStr(id)
 {
-    switch(id){
-        case "0": {
-            return "流畅";
-            break;
-        }
-        case "1": {
-            return "清晰";
-            break;
-        }
-        case "2": {
-            return "高清";
-            break;
-        }
-        case "3": {
-            return "1080P";
-            break;
-        }
-        case "4": {
-            return "1080P+";
-            break;
-        }
-        default: {
-            return "1080P";
-            break;
-        }
-    }
+	switch(id){
+		case "0": {
+			return "流畅";
+			break;
+		}
+		case "1": {
+			return "清晰";
+			break;
+		}
+		case "2": {
+			return "高清";
+			break;
+		}
+		case "3": {
+			return "1080P";
+			break;
+		}
+		case "4": {
+			return "1080P+";
+			break;
+		}
+		default: {
+			return "1080P";
+			break;
+		}
+	}
 }
 
 function getQualityApiValue(id)
 {
-    switch(id){
-        case "0": {
-            return 15;
-            break;
-        }
-        case "1": {
-            return 32;
-            break;
-        }
-        case "2": {
-            return 64;
-            break;
-        }
-        case "3": {
-            return 80;
-            break;
-        }
-        case "3": {
-            return 112;
-            break;
-        }
-        default: {
-            return 80;
-            break;
-        }
-    }
+	switch(id){
+		case "0": {
+			return 15;
+			break;
+		}
+		case "1": {
+			return 32;
+			break;
+		}
+		case "2": {
+			return 64;
+			break;
+		}
+		case "3": {
+			return 80;
+			break;
+		}
+		case "3": {
+			return 112;
+			break;
+		}
+		default: {
+			return 80;
+			break;
+		}
+	}
 }
 
 function changeVideoQuality(callback=function () {}) {
@@ -1350,13 +1420,13 @@ function changeVideoQuality(callback=function () {}) {
          <button id="qBtn_low">
             <text>流畅</text>
          </button>
-         <button id="qBtn_medium">
+		 <button id="qBtn_medium">
             <text>清晰</text>
          </button>
-         <button id="qBtn_high">
+		 <button id="qBtn_high">
             <text>高清</text>
          </button>
-         <button id="qBtn_ultra">
+		 <button id="qBtn_ultra">
             <text>1080P</text>
          </button>
       </row>
@@ -1364,25 +1434,25 @@ function changeVideoQuality(callback=function () {}) {
 </document>`;
     let parser = new DOMParser();
     let parsed = parser.parseFromString(xml.replace(new RegExp('&', 'g'), '&amp;'), "application/xml");
-    
+	
     parsed.getElementById("qBtn_low").addEventListener("select",function (e) {
-        saveUserSettings("Video_Quality", "0");
-        callback(true);
+		saveUserSettings("Video_Quality", "0");
+		callback(true);
         navigationDocument.dismissModal();
     });
-    parsed.getElementById("qBtn_medium").addEventListener("select",function (e) {
-        saveUserSettings("Video_Quality", "1");
-        callback(true);
+	parsed.getElementById("qBtn_medium").addEventListener("select",function (e) {
+		saveUserSettings("Video_Quality", "1");
+		callback(true);
         navigationDocument.dismissModal();
     });
-    parsed.getElementById("qBtn_high").addEventListener("select",function (e) {
-        saveUserSettings("Video_Quality", "2");
-        callback(true);
+	parsed.getElementById("qBtn_high").addEventListener("select",function (e) {
+		saveUserSettings("Video_Quality", "2");
+		callback(true);
         navigationDocument.dismissModal();
     });
-    parsed.getElementById("qBtn_ultra").addEventListener("select",function (e) {
-        saveUserSettings("Video_Quality", "3");
-        callback(true);
+	parsed.getElementById("qBtn_ultra").addEventListener("select",function (e) {
+		saveUserSettings("Video_Quality", "3");
+		callback(true);
         navigationDocument.dismissModal();
     });
     navigationDocument.presentModal(parsed);
@@ -1390,36 +1460,48 @@ function changeVideoQuality(callback=function () {}) {
 
 
 function getAvData(id,page,cd){ 
-    var url = `https://www.bilibili.com/video/av${id}/?p=${page}`;
-    ajax.get(url, function (html) {
-       var isNoInfo = false;
-       try{
-            var playinfoJson = html
-            .match(/__playinfo__=(.*?)<\/script>/g)
-            .map(m => m.replace(/^__playinfo__=(.*?)<\/script>$/, '$1'))[0];
-            var playinfo = JSON.parse(playinfoJson);
-        }catch(exception) {
-            isNoInfo = true;
-        }
+
+    var url = `https://api.bilibili.com/x/player/pagelist?aid=${id}&jsonp=jsonp`;
+    //var url = `https://www.bilibili.com/video/av${id}/?p=${page}`;
+
+    console.log('get av data', id, page, cd);
+    
+    ajax.get(url,function (html) {
+       console.log(html);
+
+	   var isNoInfo = false;
+	   try{
+			var playinfoJson = html
+			.match(/__playinfo__=(.*?)<\/script>/g)
+			.map(m => m.replace(/^__playinfo__=(.*?)<\/script>$/, '$1'))[0];
+
+			var playinfo = JSON.parse(playinfoJson);
+		}catch(exception) {
+			isNoInfo = true;
+		}
+
 
        var InitialStateJson = html
        .match(/__INITIAL_STATE__=(.*?)};/g)
        .map(m => m.replace(/^__INITIAL_STATE__=(.*?)};$/, '$1}'))[0];
 
        var InitialState = JSON.parse(InitialStateJson);
-       if(InitialState.videoData == undefined)
-       {
-            const data = {
-                isBangumi: true,
-                seasonID: InitialState.ssId
-            }
-           cd(data);
-           return;
-       }
-       
+
+	   
+	   if(InitialState.videoData == undefined)
+	   {
+			const data = {
+				isBangumi: true,
+				seasonID: InitialState.ssId
+			}
+		   cd(data);
+		   return;
+	   }
+	   
        var videoData = InitialState.videoData;
        var upData = InitialState.upData;
 
+        
        const part = videoData.pages.map((v, i) => {
 
         v.name = v.part;
@@ -1438,9 +1520,14 @@ function getAvData(id,page,cd){
         wb_summary: videoData.desc,
         part: part,
         cardrich: cardrich,
-        gt_InitialState: InitialState
+		gt_InitialState: InitialState
        }
+
+        console.log('data',data);
+        displayError(data.id, data.wb_full_url)
        cd(data);
+
+
     });
 
 
@@ -1454,11 +1541,43 @@ App.onError = function (message, sourceURL, line){
     // console.log(message, sourceURL, line);
     displayError("发生错误",`${message}\r\n\r\n${sourceURL} : ${line}`);
 };
-var now = new Date();
-var beginTime = now.getSeconds();
+
 evaluateScripts([tvBaseURL+'/tvOS2.js'], function (success) {
     if(success){
+        // let view = new videoList();
+        //
+        // view.title = 1010;
+        // view.pageDataProxy.list.push("aaa");
+        // view.display();
+        //
+        //
+        // test.newVideo = function (title="title1") {
+        //     let d = new DataItem("video",UUID());
+        //     d.cover = "https://avatars0.githubusercontent.com/u/5716100";
+        //     d.title = title;
+        //     d.description = "";
+        //     return d;
+        // };
+        //
+        // test.list = [
+        //     test.newVideo("ceshi")
+        // ];
+        //
+        // let view = new videoList("title111",test.list);
+        //
+        //
+        // test.add = function () {
+        //     view.list.push(test.newVideo(UUID()));
+        // };
+        //
+        // // test.section.dataItem.touchPropertyPath
+        //
+        // // view.dataItem.title = "测试标题3";
+        //
+        // view.display();
+
         initBar();
+
         //获取之前持久化的cookie
         window.getUserCookie&&getUserCookie();
     }else{
@@ -1466,118 +1585,125 @@ evaluateScripts([tvBaseURL+'/tvOS2.js'], function (success) {
     }
 });
 
-function playVideo(infoData, page, quality=0)
+function playVideo(infoData, page, quality=80)
 {
-    biliApiRequest(infoData.aid, infoData.part[page].cid, null, quality, false, false, function (detail){
-        openVideoWindow(infoData.aid, null, detail, infoData.wb_img, page, infoData.wb_desc, infoData.wb_desc);
-    }); 
+	biliApiRequest(infoData.part[page].cid, quality, false, false, function (detail){
+		openVideoWindow(infoData.aid, detail, infoData.wb_img, page, infoData.wb_desc, infoData.wb_desc);
+	});	
 }
 
-function playBangumi(sid, videoInfo, quality=0)
+function playBangumi(sid, videoInfo, quality=80)
 {
-        var epcid = videoInfo.cid;
-        var avid = videoInfo.aid;
-        var ep_id = videoInfo.id;
-        if(epcid === "")
-        {
-            Alert("无法加载此番剧","调用接口时返回了异常数据");
-            return;
-        }
-        biliApiRequest(avid, epcid, ep_id, quality, true, false, function (detail){
-            openVideoWindow(videoInfo.av_id, sid, detail, videoInfo.cover, videoInfo.index, videoInfo.index_title, `第 ${videoInfo.index} 话`, true);
-        }); 
+	biliepRequest(sid, 1, function (epIndex){
+		var epcid = "";
+		epIndex.result.forEach(function (ep){
+			
+			console.log("EP信息");
+			console.log(ep);
+			
+			var tempIndex = parseInt(ep.index);
+			var tempTargetIndex = parseInt(videoInfo.index);
+			
+			if(tempIndex == tempTargetIndex)
+			{
+				epcid = ep.cid;
+			}
+		});
+		
+		if(epcid === "")
+		{
+			Alert("无法加载此番剧","调用接口时返回了异常数据");
+			return;
+		}
+		
+		biliApiRequest(epcid, quality, true, false, function (detail){
+			openVideoWindow(videoInfo.av_id, detail, videoInfo.cover, videoInfo.index, videoInfo.index_title, `第 ${videoInfo.index} 话`, true);
+		});	
+	});	
 }
 
-function openVideoWindow(aid, sid, detail, imageURL, page, title, desc, isBangumi = null)
+function openVideoWindow(aid, detail, imageURL, page, title, desc, isBangumi = null)
 {
-        let videoList = new DMPlaylist();
-        let video = null;
-        if(isBangumi) {
-            try{
-                var base_url = detail.result.dash.video[0].base_url;
-            }catch(exception) {
-                displayError("播放失败","视频地址获取错误");
-                return;
-            }            
-            video = new DMMediaItem('video', base_url); 
-            video.url = base_url;
-            video.artworkImageURL = imageURL;
-            video.options = {
-                headers: {
-                    "User-Agent": 'ua',
-                    "referer": "https://www.bilibili.com/bangumi/play/ss" + sid
-                }
-            };
-            video.title = `第 ${page} 话 - ${title}`;
-        } else {
-            try{
-                var base_url = detail.data.dash.video[0].base_url;
-            }catch(exception) {
-                displayError("播放失败","视频地址获取错误");
-                return;
-            }
-            video = new DMMediaItem('video', base_url); 
-            video.url = base_url;
-            video.artworkImageURL = imageURL;
-            video.options = {
-                headers: {
-                    "User-Agent": ua,
-                    "referer": "https://www.bilibili.com/video/av" + aid
-                }
-            };
-            video.title = `P${page} - ${title}`;
-        }
-        
-        video.description = desc;
-        videoList.push(video);
-        if(nowPlayer)nowPlayer.stop();
-        let myPlayer = new DMPlayer();
-        nowPlayer = myPlayer;
-        myPlayer.playlist = videoList;
-        myPlayer.addEventListener('stateDidChange', function(listener, extraInfo) {
-            console.log("state: " + listener.state);
-        },{});
-        myPlayer.play() 
+		let videoList = new DMPlaylist();
+		let video = new DMMediaItem('video', detail.durl[0].url);
+		video.url = detail.durl[0].url;
+		video.artworkImageURL = imageURL;
+		video.options = {headers:{
+			"User-Agent": ua,
+			"referer": "https://www.bilibili.com/video/av" + aid
+		}};
+		video.title = `P${page} - ${title}`;
+		if(isBangumi)
+		{
+			video.title = `第 ${page} 话 - ${title}`;
+		}
+		video.description = desc;
+		videoList.push(video);
+		if(nowPlayer)nowPlayer.stop();
+		let myPlayer = new DMPlayer();
+		nowPlayer = myPlayer;
+		myPlayer.playlist = videoList;
+		// myPlayer.addEventListener('timeBoundaryDidCross', (listener, extraInfo) => {
+		//     console.log("bound: " + listener.boundary);
+		// }, {});
+	
+		// myPlayer.addEventListener('timeDidChange', function(listener,extraInfo) {
+		//     console.log("time: " + listener.time);
+		// },{interval: 1});
+		myPlayer.addEventListener('stateDidChange', function(listener, extraInfo) {
+			console.log("state: " + listener.state);
+		},{});
+		// myPlayer.addDanMu(msg="This is a test", color=0xFF0000, fontSize=25, style=0);
+		myPlayer.play()	
 }
 
-var api_url = 'https://api.bilibili.com/x/player/playurl?';  //http://interface.bilibili.com/v2/playurl?
-var bangumi_api_url = 'https://api.bilibili.com/pgc/player/web/playurl?';  //http://bangumi.bilibili.com/player/web_api/playurl?
+var SEC1 = '94aba54af9065f71de72f5508f1cd42e';
+var appkey = '27eb53fc9058f8c3'; //  84956560bc028eb7
+var api_url = 'http://interface.bilibili.com/v2/playurl?';
+var bangumi_api_url = 'http://bangumi.bilibili.com/player/web_api/playurl?';
 
-function biliApiRequest(avid, cid, ep_id, quality, bangumi = null, bangumi_movie = null, rd)
+function biliApiRequest(cid, quality, bangumi = null, bangumi_movie = null, rd)
 {
-    var ts = (new Date()).getTime().toString();
-    var endTime = now.getSeconds(); //获取当前秒数
-    var deltaTime = (endTime - beginTime);//获取，两者所差秒数，即js代码运行时间。
-    var session = genMD5(deltaTime.toString());
-    if(bangumi)
-    {
-        var params_str = 'avid=' + avid + '&cid=' + cid + '&bvid=' + '&qn=' + quality + '&type' + 
-        '&otype=json' + '&ep_id=' + ep_id + '&fourk=1' + '&fnver=0' + '&fnval=16' + '&session=' + session;
-        var genApiUrl = bangumi_api_url + params_str;
-        var resultData = null;
-        ajax.get(genApiUrl,function (data) {
-            resultData = JSON.parse(data);
-            rd(resultData);
-        });
-    }
-    else
-    {
-        var params_str = 'avid=' + avid + '&cid=' + cid + '&bvid=' + '&qn=' + quality + '&type' + 
-        '&otype=json' + '&fnver=0' + '&fnval=16' + '&session=' + session;
-        var genApiUrl = api_url + params_str;  
-        var resultData = null;
-        ajax.get(genApiUrl, function (data) {
-            resultData = JSON.parse(data);
-            rd(resultData);
-        });
-    }
+	var ts = (new Date()).getTime().toString();
+	if(bangumi)
+	{
+		var params_str = 'appkey=' + appkey + '&cid=' + cid + '&module=bangumi&otype=json&qn=' + quality + '&quality=' + quality + '&season_type=1&type=';
+		var chksum = genMD5(params_str+SEC1);
+		var genApiUrl = bangumi_api_url + params_str + '&sign=' + chksum;
+		
+		var resultData = null;
+		ajax.get(genApiUrl,function (html) {
+			resultData = JSON.parse(html);
+			rd(resultData);
+		});
+	}
+	else
+	{
+		var params_str = 'appkey=' + appkey + '&cid=' + cid + '&otype=json&qn=' + quality + '&quality=' + quality + '&type=';
+		var chksum = genMD5(params_str+SEC1);
+		var genApiUrl = api_url + params_str + '&sign=' + chksum;
+		
+		var resultData = null;
+		ajax.get(genApiUrl,function (html) {
+			resultData = JSON.parse(html);
+			rd(resultData);
+		});
+	}
 }
 
+function biliepRequest(sid, stype=1, rd)
+{
+	var ts = (new Date()).getTime().toString();
+	ajax.get("https://bangumi.bilibili.com/web_api/get_ep_list?season_id=" + sid + "&season_type=" + stype,function (html) {
+			resultData = JSON.parse(html);
+			rd(resultData);
+	});
+}
 
 function genMD5(value)
 {
-    var MD5 = function(d){result = M(V(Y(X(d),8*d.length)));return result.toLowerCase()};function M(d){for(var _,m="0123456789ABCDEF",f="",r=0;r<d.length;r++)_=d.charCodeAt(r),f+=m.charAt(_>>>4&15)+m.charAt(15&_);return f}function X(d){for(var _=Array(d.length>>2),m=0;m<_.length;m++)_[m]=0;for(m=0;m<8*d.length;m+=8)_[m>>5]|=(255&d.charCodeAt(m/8))<<m%32;return _}function V(d){for(var _="",m=0;m<32*d.length;m+=8)_+=String.fromCharCode(d[m>>5]>>>m%32&255);return _}function Y(d,_){d[_>>5]|=128<<_%32,d[14+(_+64>>>9<<4)]=_;for(var m=1732584193,f=-271733879,r=-1732584194,i=271733878,n=0;n<d.length;n+=16){var h=m,t=f,g=r,e=i;f=md5_ii(f=md5_ii(f=md5_ii(f=md5_ii(f=md5_hh(f=md5_hh(f=md5_hh(f=md5_hh(f=md5_gg(f=md5_gg(f=md5_gg(f=md5_gg(f=md5_ff(f=md5_ff(f=md5_ff(f=md5_ff(f,r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+0],7,-680876936),f,r,d[n+1],12,-389564586),m,f,d[n+2],17,606105819),i,m,d[n+3],22,-1044525330),r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+4],7,-176418897),f,r,d[n+5],12,1200080426),m,f,d[n+6],17,-1473231341),i,m,d[n+7],22,-45705983),r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+8],7,1770035416),f,r,d[n+9],12,-1958414417),m,f,d[n+10],17,-42063),i,m,d[n+11],22,-1990404162),r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+12],7,1804603682),f,r,d[n+13],12,-40341101),m,f,d[n+14],17,-1502002290),i,m,d[n+15],22,1236535329),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+1],5,-165796510),f,r,d[n+6],9,-1069501632),m,f,d[n+11],14,643717713),i,m,d[n+0],20,-373897302),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+5],5,-701558691),f,r,d[n+10],9,38016083),m,f,d[n+15],14,-660478335),i,m,d[n+4],20,-405537848),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+9],5,568446438),f,r,d[n+14],9,-1019803690),m,f,d[n+3],14,-187363961),i,m,d[n+8],20,1163531501),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+13],5,-1444681467),f,r,d[n+2],9,-51403784),m,f,d[n+7],14,1735328473),i,m,d[n+12],20,-1926607734),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+5],4,-378558),f,r,d[n+8],11,-2022574463),m,f,d[n+11],16,1839030562),i,m,d[n+14],23,-35309556),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+1],4,-1530992060),f,r,d[n+4],11,1272893353),m,f,d[n+7],16,-155497632),i,m,d[n+10],23,-1094730640),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+13],4,681279174),f,r,d[n+0],11,-358537222),m,f,d[n+3],16,-722521979),i,m,d[n+6],23,76029189),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+9],4,-640364487),f,r,d[n+12],11,-421815835),m,f,d[n+15],16,530742520),i,m,d[n+2],23,-995338651),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+0],6,-198630844),f,r,d[n+7],10,1126891415),m,f,d[n+14],15,-1416354905),i,m,d[n+5],21,-57434055),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+12],6,1700485571),f,r,d[n+3],10,-1894986606),m,f,d[n+10],15,-1051523),i,m,d[n+1],21,-2054922799),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+8],6,1873313359),f,r,d[n+15],10,-30611744),m,f,d[n+6],15,-1560198380),i,m,d[n+13],21,1309151649),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+4],6,-145523070),f,r,d[n+11],10,-1120210379),m,f,d[n+2],15,718787259),i,m,d[n+9],21,-343485551),m=safe_add(m,h),f=safe_add(f,t),r=safe_add(r,g),i=safe_add(i,e)}return Array(m,f,r,i)}function md5_cmn(d,_,m,f,r,i){return safe_add(bit_rol(safe_add(safe_add(_,d),safe_add(f,i)),r),m)}function md5_ff(d,_,m,f,r,i,n){return md5_cmn(_&m|~_&f,d,_,r,i,n)}function md5_gg(d,_,m,f,r,i,n){return md5_cmn(_&f|m&~f,d,_,r,i,n)}function md5_hh(d,_,m,f,r,i,n){return md5_cmn(_^m^f,d,_,r,i,n)}function md5_ii(d,_,m,f,r,i,n){return md5_cmn(m^(_|~f),d,_,r,i,n)}function safe_add(d,_){var m=(65535&d)+(65535&_);return(d>>16)+(_>>16)+(m>>16)<<16|65535&m}function bit_rol(d,_){return d<<_|d>>>32-_}
+	var MD5 = function(d){result = M(V(Y(X(d),8*d.length)));return result.toLowerCase()};function M(d){for(var _,m="0123456789ABCDEF",f="",r=0;r<d.length;r++)_=d.charCodeAt(r),f+=m.charAt(_>>>4&15)+m.charAt(15&_);return f}function X(d){for(var _=Array(d.length>>2),m=0;m<_.length;m++)_[m]=0;for(m=0;m<8*d.length;m+=8)_[m>>5]|=(255&d.charCodeAt(m/8))<<m%32;return _}function V(d){for(var _="",m=0;m<32*d.length;m+=8)_+=String.fromCharCode(d[m>>5]>>>m%32&255);return _}function Y(d,_){d[_>>5]|=128<<_%32,d[14+(_+64>>>9<<4)]=_;for(var m=1732584193,f=-271733879,r=-1732584194,i=271733878,n=0;n<d.length;n+=16){var h=m,t=f,g=r,e=i;f=md5_ii(f=md5_ii(f=md5_ii(f=md5_ii(f=md5_hh(f=md5_hh(f=md5_hh(f=md5_hh(f=md5_gg(f=md5_gg(f=md5_gg(f=md5_gg(f=md5_ff(f=md5_ff(f=md5_ff(f=md5_ff(f,r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+0],7,-680876936),f,r,d[n+1],12,-389564586),m,f,d[n+2],17,606105819),i,m,d[n+3],22,-1044525330),r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+4],7,-176418897),f,r,d[n+5],12,1200080426),m,f,d[n+6],17,-1473231341),i,m,d[n+7],22,-45705983),r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+8],7,1770035416),f,r,d[n+9],12,-1958414417),m,f,d[n+10],17,-42063),i,m,d[n+11],22,-1990404162),r=md5_ff(r,i=md5_ff(i,m=md5_ff(m,f,r,i,d[n+12],7,1804603682),f,r,d[n+13],12,-40341101),m,f,d[n+14],17,-1502002290),i,m,d[n+15],22,1236535329),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+1],5,-165796510),f,r,d[n+6],9,-1069501632),m,f,d[n+11],14,643717713),i,m,d[n+0],20,-373897302),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+5],5,-701558691),f,r,d[n+10],9,38016083),m,f,d[n+15],14,-660478335),i,m,d[n+4],20,-405537848),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+9],5,568446438),f,r,d[n+14],9,-1019803690),m,f,d[n+3],14,-187363961),i,m,d[n+8],20,1163531501),r=md5_gg(r,i=md5_gg(i,m=md5_gg(m,f,r,i,d[n+13],5,-1444681467),f,r,d[n+2],9,-51403784),m,f,d[n+7],14,1735328473),i,m,d[n+12],20,-1926607734),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+5],4,-378558),f,r,d[n+8],11,-2022574463),m,f,d[n+11],16,1839030562),i,m,d[n+14],23,-35309556),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+1],4,-1530992060),f,r,d[n+4],11,1272893353),m,f,d[n+7],16,-155497632),i,m,d[n+10],23,-1094730640),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+13],4,681279174),f,r,d[n+0],11,-358537222),m,f,d[n+3],16,-722521979),i,m,d[n+6],23,76029189),r=md5_hh(r,i=md5_hh(i,m=md5_hh(m,f,r,i,d[n+9],4,-640364487),f,r,d[n+12],11,-421815835),m,f,d[n+15],16,530742520),i,m,d[n+2],23,-995338651),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+0],6,-198630844),f,r,d[n+7],10,1126891415),m,f,d[n+14],15,-1416354905),i,m,d[n+5],21,-57434055),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+12],6,1700485571),f,r,d[n+3],10,-1894986606),m,f,d[n+10],15,-1051523),i,m,d[n+1],21,-2054922799),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+8],6,1873313359),f,r,d[n+15],10,-30611744),m,f,d[n+6],15,-1560198380),i,m,d[n+13],21,1309151649),r=md5_ii(r,i=md5_ii(i,m=md5_ii(m,f,r,i,d[n+4],6,-145523070),f,r,d[n+11],10,-1120210379),m,f,d[n+2],15,718787259),i,m,d[n+9],21,-343485551),m=safe_add(m,h),f=safe_add(f,t),r=safe_add(r,g),i=safe_add(i,e)}return Array(m,f,r,i)}function md5_cmn(d,_,m,f,r,i){return safe_add(bit_rol(safe_add(safe_add(_,d),safe_add(f,i)),r),m)}function md5_ff(d,_,m,f,r,i,n){return md5_cmn(_&m|~_&f,d,_,r,i,n)}function md5_gg(d,_,m,f,r,i,n){return md5_cmn(_&f|m&~f,d,_,r,i,n)}function md5_hh(d,_,m,f,r,i,n){return md5_cmn(_^m^f,d,_,r,i,n)}function md5_ii(d,_,m,f,r,i,n){return md5_cmn(m^(_|~f),d,_,r,i,n)}function safe_add(d,_){var m=(65535&d)+(65535&_);return(d>>16)+(_>>16)+(m>>16)<<16|65535&m}function bit_rol(d,_){return d<<_|d>>>32-_}
 
-    var result = MD5(value);
-    return result;
+	var result = MD5(value);
+	return result;
 }

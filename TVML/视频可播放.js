@@ -268,6 +268,7 @@ function timeline(setDocument) {
                 objectItem.description = `${result.pub_index} ${result.pub_time}`;
 
                 objectItem.onselect = function (e) {
+                    console.warn(e,result);
                     openBangumi(result.season_id);
                 };
                 index++;
@@ -462,10 +463,10 @@ function openUser(mid) {
     }
     var loading = tvOS.template.loading(`加载中...`);
     loading.display();
-    ajax.get(`https://api.bilibili.com/x/member/web/account`,function (data) {
+    ajax.get(`https://api.bilibili.com/cardrich?mid=${mid}`,function (data) {
         data = jsonParse(data);
         if(data.code == 0){
-            data = data.data;
+            data = data.data.card;
             var up = data;
 
             var regtime = new Date();
@@ -478,80 +479,81 @@ function openUser(mid) {
             if(data.nameplate){
                 nameplate = data.nameplate.name;
                 nameplate_icon = data.nameplate.image;
+                //image_small
             }
 
             var page = tvOS.template.custom('');
             page.xml = `<document>
-                                <productTemplate>
-                                <background>
-                                </background>
-                                <banner>
-                                    <infoList>
-                                        <info>
-                                            <header>
-                                                <title>UID</title>
-                                            </header>
-                                            <text>${data.mid}</text>
-                                        </info>
-                                        <info>
-                                            <header>
-                                                <title>性别</title>
-                                            </header>
-                                            <text>${data.sex}</text>
-                                        </info>
-                                        <info>
-                                            <header>
-                                                <title>位置</title>
-                                            </header>
-                                            <text>${data.place}</text>
-                                        </info>
-                                        <info>
-                                            <header>
-                                                <title>注册于</title>
-                                            </header>
-                                            <text>${regtime_text}</text>
-                                        </info>
-                                        <info>
-                                            <header>
-                                                <title>勋章</title>
-                                            </header>
-                                            <text>${nameplate}</text>
-                                        </info>
-                                    </infoList>
-                                    <stack>
-                                        <title>${data.name}</title>
-                                        <row>
-                                            <text>${data.sign}</text>
-                                        </row>
-                                        <description id="description_more"></description>
-                                        <row>
-                                            <buttonLockup id="follow_button">
-                                                <badge src="resource://button-rated" />
-                                                <title>大概没关注</title>
-                                            </buttonLockup>
-                                            
-                                            <buttonLockup>
-                                                <badge src="resource://button-preview" />
-                                                <title>视频</title>
-                                            </buttonLockup>
-                                            <buttonLockup>
-                                                <badge src="resource://button-rated" />
-                                                <title>专栏</title>
-                                            </buttonLockup>
-                                            <buttonLockup>
-                                                <badge src="resource://button-rated" />
-                                                <title>收藏</title>
-                                            </buttonLockup>
-                                            <buttonLockup>
-                                                <badge src="resource://button-rated" />
-                                                <title>订阅</title>
-                                            </buttonLockup>
-                                        </row>
-                                    </stack>
-                                    <heroImg src="${data.face}" />
-                                </banner>
-                            </productTemplate>
-                        </document>`;
+    <productTemplate>
+        <background>
+        </background>
+        <banner>
+            <infoList>
+                <info>
+                    <header>
+                        <title>UID</title>
+                    </header>
+                    <text>${data.mid}</text>
+                </info>
+                <info>
+                    <header>
+                        <title>性别</title>
+                    </header>
+                    <text>${data.sex}</text>
+                </info>
+                <info>
+                    <header>
+                        <title>位置</title>
+                    </header>
+                    <text>${data.place}</text>
+                </info>
+                <info>
+                    <header>
+                        <title>注册于</title>
+                    </header>
+                    <text>${regtime_text}</text>
+                </info>
+                <info>
+                    <header>
+                        <title>勋章</title>
+                    </header>
+                    <text>${nameplate}</text>
+                </info>
+            </infoList>
+            <stack>
+                <title>${data.name}</title>
+                <row>
+                    <text>${data.sign}</text>
+                </row>
+                <description id="description_more"></description>
+                <row>
+                    <buttonLockup id="follow_button">
+                        <badge src="resource://button-rated" />
+                        <title>大概没关注</title>
+                    </buttonLockup>
+                    
+                    <buttonLockup>
+                        <badge src="resource://button-preview" />
+                        <title>视频</title>
+                    </buttonLockup>
+                    <buttonLockup>
+                        <!--<badge src="resource://button-rated" />-->
+                        <title>专栏</title>
+                    </buttonLockup>
+                    <buttonLockup>
+                        <!--<badge src="resource://button-rated" />-->
+                        <title>收藏</title>
+                    </buttonLockup>
+                    <buttonLockup>
+                        <!--<badge src="resource://button-rated" />-->
+                        <title>订阅</title>
+                    </buttonLockup>
+                </row>
+            </stack>
+            <heroImg src="${data.face}" />
+        </banner>
+    </productTemplate>
+</document>`;
 
             test.uv = page.view;
             loading.replaceDocument(page);
@@ -647,22 +649,22 @@ function openUser(mid) {
                         if(!list)return
                         var shelf = page.view.createElement('shelf');
                         shelf.innerHTML = `
-                            <header>
-                                <title>${title}</title>
-                            </header>
-                            <prototypes>
-                                <lockup prototype="video">
-                                    <img binding="@src:{cover};" width="300" height="187"/>
-                                    <title style="font-size: 30;" binding="textContent:{title};" />
-                                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
-                                </lockup>
-                                <lockup prototype="video-more">
-                                    <img src="${tvBaseURL}/images/more400.png" width="187" height="187" />
-                                    <title style="font-size: 30;" binding="textContent:{title};" />
-                                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
-                                </lockup>
-                            </prototypes>
-                            <section id="${listKey}" binding="items:{${listKey}};" />`;
+            <header>
+                <title>${title}</title>
+            </header>
+            <prototypes>
+                <lockup prototype="video">
+                    <img binding="@src:{cover};" width="300" height="187"/>
+                    <title style="font-size: 30;" binding="textContent:{title};" />
+                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
+                </lockup>
+                <lockup prototype="video-more">
+                    <img src="${tvBaseURL}/images/more400.png" width="187" height="187" />
+                    <title style="font-size: 30;" binding="textContent:{title};" />
+                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
+                </lockup>
+            </prototypes>
+            <section id="${listKey}" binding="items:{${listKey}};" />`;
                         let section =  shelf.getElementsByTagName("section").item(0);
                         section.dataItem = new DataItem();
                         let datalist = list.map((av) => {
@@ -691,6 +693,8 @@ function openUser(mid) {
                     })
                 }
             });
+
+            // ajax.get(`https://api.bilibili.com/vipinfo/default?mid=${mid}&loginid=902845`)
 
             let follow_button = page.view.getElementById("follow_button");
             let follow_button_badge = follow_button.getElementsByTagName("badge").item(0);
@@ -730,10 +734,16 @@ function openUser(mid) {
                 }
             })
 
+
+
+
+
+            // test.uv.appendChild(test.uv.createElement('shelf'))
+
         }
     })
 }
-function openUserVideo(mid, title) {
+function openUserVideo(mid,title) {
     openVideoList(title,function (page,callback) {
         ajax.get(`https://space.bilibili.com/ajax/member/getSubmitVideos?mid=${mid}&page=${page}&pagesize=25`,function (data) {
             data = jsonParse(data);
@@ -797,180 +807,228 @@ function openUserChannelVideo(mid,cid,title) {
     //
 }
 function openBangumi(sid) {
-    //https://api.bilibili.com/pgc/view/web/season?season_id=${sid}
-    ajax.get(`https://api.bilibili.com/pgc/view/web/season?season_id=${sid}`, function (data) {
-    data = jsonParse(data);
-    if(data.code == 0) {
-        var result = data.result;
-        var page = tvOS.template.custom('');
+    ajax.get(`https://bangumi.bilibili.com/jsonp/seasoninfo/${sid}.ver?callback=seasonListCallback&jsonp=jsonp`,function (data) {
+        function seasonListCallback(data) {
+            if(data.code == 0){
+                var result = data.result;
+                console.log(result);
+                var page = tvOS.template.custom('');
 
-        var tags = "";
-        var actor = "";
-/*
-        result.tags.forEach(function (tag) {
-            tags+=`<textBadge>${tag.tag_name}</textBadge>`
-        });
-        result.actor.forEach(function (a) {
-            actor+=`<text>${a.actor}</text>`
-        });
+                var tags = "";
+                var actor = "";
 
-        var index_show = "";
-        if(result.media && result.media.episode_index && result.media.episode_index.index_show){
-            index_show = result.media.episode_index.index_show
-        }
-*/
-        page.xml = `<document>
-                        <productTemplate>
-                        <background>
-                        </background>
-                        <banner>
-                            <infoList>
-                                <info>
-                                    <header>
-                                        <title>番剧</title>
-                                    </header>
-                                </info>
-                            </infoList>
-                            <stack>
-                                <title>${result.title}</title>
-                                <row>
-                                    <text>${result.publish.pub_time}</text>
-                                </row>
-                                <description id="description_more" allowsZooming="true" moreLabel="more">${result.evaluate}
-                                </description>
-                                <row>
-                                    <buttonLockup id="play_button">
-                                        <badge src="resource://button-preview" />
-                                        <title>播放</title>
-                                    </buttonLockup>
-                                </row>
-                            </stack>
-                            <heroImg src="${result.cover}" />
-                        </banner>
-                        <shelf>
-                            <header>
-                                <title>剧集</title>
-                            </header>
-                            <prototypes>
-                                <lockup prototype="bangumi">
-                                    <img binding="@src:{cover};" width="300" height="187"/>
-                                    <title style="font-size: 30;" binding="textContent:{title};" />
-                                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
-                                </lockup>
-                            </prototypes>
-                            <section id="bangumi" binding="items:{bangumi};" />
-                        </shelf>
+                result.tags.forEach(function (tag) {
+                    tags+=`<textBadge>${tag.tag_name}</textBadge>`
+                });
+                result.actor.forEach(function (a) {
+                    actor+=`<text>${a.actor}</text>`
+                });
 
-                        <shelf>
-                            <header>
-                                <title>更多推荐</title>
-                            </header>
-                            <prototypes>
-                                <lockup prototype="moreVideo">
-                                    <img binding="@src:{cover};" width="250" height="333"/>
-                                    <title style="font-size: 30;" binding="textContent:{title};" />
-                                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
-                                </lockup>
-                            </prototypes>
-                            <section id="moreVideo" binding="items:{moreVideo};" />
-                        </shelf>
-                        <shelf>
-                            <header>
-                                <title>相关视频</title>
-                            </header>
-                            <prototypes>
-                                <lockup prototype="tagVideo">
-                                    <img binding="@src:{cover};" width="300" height="187"/>
-                                    <title style="font-size: 30;" binding="textContent:{title};" />
-                                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
-                                </lockup>
-                            </prototypes>
-                            <section id="tagVideo" binding="items:{tagVideo};" />
-                        </shelf>
-                        </productTemplate>
-                        </document>`;
+                var index_show = "";
+                if(result.media && result.media.episode_index && result.media.episode_index.index_show){
+                    index_show = result.media.episode_index.index_show
+                }
 
-        page.view.getElementById("description_more").addEventListener("select",function (e) {
-            let desc = tvOS.template.descriptiveAlert([result.bangumi_title,result.jp_title],'',`${index_show}\r\n\r\n${result.evaluate}\r\n\r\n${result.staff}`);
-            // desc.background = result.cover;
-            desc.presentModal();
-            // tvOS.template.compilation(result.bangumi_title,result.jp_title,`${result.evaluate}\r\n${result.staff}`).display();
-        });
-        page.view.getElementById("play_button").addEventListener("select",function (e) {
-            playBangumi(sid, result.episodes[0], getQualityApiValue(getUserSettings("Video_Quality")));
-        });
-        var bangumiSection = page.view.getElementById("bangumi")
-        bangumiSection.dataItem = new DataItem();
-        bangumiSection.dataItem.setPropertyPath("bangumi", result.episodes.map((av) => {
-            let objectItem = new DataItem('bangumi', av.aid);
-            objectItem.cover = av.cover;
-            objectItem.title = av.title;
-            objectItem.description = `第${av.title}话`;
-            objectItem.onselect = function (e) {
-                playBangumi(sid, av, getQualityApiValue(getUserSettings("Video_Quality")));
-            };
-            return objectItem;
-        }));
-        page.display();
+                page.xml = `<document>
+    <productTemplate>
+        <background>
+        </background>
+        <banner>
+            <infoList>
+                <info>
+                    <header>
+                        <title>Actor</title>
+                    </header>
+                    ${actor};
+                </info>
+            </infoList>
+            <stack>
+                <title>${result.bangumi_title}</title>
+                <row>
+                    <text>${result.pub_time}</text>
+                    <text>${index_show}</text>
+                    ${tags}
+                </row>
+                <description id="description_more" allowsZooming="true" moreLabel="more">${result.evaluate}
+                ${result.staff}</description>
+                <row>
+                    <buttonLockup id="play_button">
+                        <badge src="resource://button-preview" />
+                        <title>播放</title>
+                    </buttonLockup>
+                </row>
+            </stack>
+            <heroImg src="${result.cover}" />
+        </banner>
+        <shelf>
+            <header>
+                <title>剧集</title>
+            </header>
+            <prototypes>
+                <lockup prototype="bangumi">
+                    <img binding="@src:{cover};" width="300" height="187"/>
+                    <title style="font-size: 30;" binding="textContent:{title};" />
+                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
+                </lockup>
+            </prototypes>
+            <section id="bangumi" binding="items:{bangumi};" />
+        </shelf>
+        <shelf>
+            <header>
+                <title>承包榜 7日</title>
+            </header>
+            <prototypes>
+                <lockup prototype="tuhao" style="border-radius: circle;">
+                    <img style="border-radius: circle;" binding="@src:{cover};" width="150" height="150"/>
+                    <title style="font-size: 30;" binding="textContent:{title};" />
+                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
+                </lockup>
+            </prototypes>
+            <section id="tuhao" binding="items:{tuhao};" />
+        </shelf>
+        <shelf>
+            <header>
+                <title>更多推荐</title>
+            </header>
+            <prototypes>
+                <lockup prototype="moreVideo">
+                    <img binding="@src:{cover};" width="250" height="333"/>
+                    <title style="font-size: 30;" binding="textContent:{title};" />
+                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
+                </lockup>
+            </prototypes>
+            <section id="moreVideo" binding="items:{moreVideo};" />
+        </shelf>
+        <shelf>
+            <header>
+                <title>相关视频</title>
+            </header>
+            <prototypes>
+                <lockup prototype="tagVideo">
+                    <img binding="@src:{cover};" width="300" height="187"/>
+                    <title style="font-size: 30;" binding="textContent:{title};" />
+                    <description binding="textContent:{description};" style="text-align: center;font-size: 25;color:#fff" />
+                </lockup>
+            </prototypes>
+            <section id="tagVideo" binding="items:{tagVideo};" />
+        </shelf>
+    </productTemplate>
+</document>`;
 
-        //加载相关视频
-        ajax.get("https://api.bilibili.com/x/tag/info?tag_name="+encodeURI(result.title),function (tagData) {
-            tagData = jsonParse(tagData);
-            console.log('tagData',tagData);
-            if(tagData.code == 0){
-                let tagId  = tagData.data.tag_id;
-                ajax.get(`https://api.bilibili.com/x/web-interface/tag/top?pn=1&ps=30&tid=${tagId}`,function (tagVideo) {
-                    tagVideo = jsonParse(tagVideo);
-                    console.log('tagVideo',tagVideo);
-                    if(tagVideo.code == 0){
-                        tagVideo = tagVideo.data;
-                        var tagVideoSection = page.view.getElementById("tagVideo");
-                        tagVideoSection.dataItem = new DataItem();
-                        tagVideoSection.dataItem.setPropertyPath("tagVideo", tagVideo.map((av) => {
-                            let objectItem = new DataItem('tagVideo', av.aid);
-                            objectItem.cover = av.pic;
-                            objectItem.title = av.title;
-                            var up = '';
-                            if(av.owner && av.owner.name){
-                                up = av.owner.name;
+                page.view.getElementById("description_more").addEventListener("select",function (e) {
+                    let desc = tvOS.template.descriptiveAlert([result.bangumi_title,result.jp_title],'',`${index_show}\r\n\r\n${result.evaluate}\r\n\r\n${result.staff}`);
+                    // desc.background = result.cover;
+                    desc.presentModal();
+                    // tvOS.template.compilation(result.bangumi_title,result.jp_title,`${result.evaluate}\r\n${result.staff}`).display();
+                });
+                page.view.getElementById("play_button").addEventListener("select",function (e) {
+                    playBangumi(sid, result.episodes[0], getQualityApiValue(getUserSettings("Video_Quality")));
+                });
+                var bangumiSection = page.view.getElementById("bangumi")
+                bangumiSection.dataItem = new DataItem();
+                bangumiSection.dataItem.setPropertyPath("bangumi", result.episodes.map((av) => {
+                    let objectItem = new DataItem('bangumi', av.av_id);
+                    objectItem.cover = av.cover;
+                    objectItem.title = av.index_title;
+                    objectItem.description = `第${av.index}话`;
+                    if(av.is_new){
+                        objectItem.description = `NEW 第${av.index}话`;
+                    }
+                    objectItem.onselect = function (e) {
+                        playBangumi(sid, av, getQualityApiValue(getUserSettings("Video_Quality")));
+                    };
+                    return objectItem;
+                }));
+
+
+
+                page.display();
+
+
+
+                //加载相关视频
+                ajax.get("https://api.bilibili.com/x/tag/info?tag_name="+encodeURI(result.title),function (tagData) {
+                    tagData = jsonParse(tagData);
+                    console.log('tagData',tagData);
+                    if(tagData.code == 0){
+                        let tagId  = tagData.data.tag_id;
+                        ajax.get(`https://api.bilibili.com/x/web-interface/tag/top?pn=1&ps=30&tid=${tagId}`,function (tagVideo) {
+                            tagVideo = jsonParse(tagVideo);
+                            console.log('tagVideo',tagVideo);
+                            if(tagVideo.code == 0){
+                                tagVideo = tagVideo.data;
+                                var tagVideoSection = page.view.getElementById("tagVideo");
+                                tagVideoSection.dataItem = new DataItem();
+                                tagVideoSection.dataItem.setPropertyPath("tagVideo", tagVideo.map((av) => {
+                                    let objectItem = new DataItem('tagVideo', av.aid);
+                                    objectItem.cover = av.pic;
+                                    objectItem.title = av.title;
+                                    var up = '';
+                                    if(av.owner && av.owner.name){
+                                        up = av.owner.name;
+                                    }
+
+                                    objectItem.description = `UP:${up}  T:${av.tname}`;
+                                    objectItem.onselect = function (e) {
+                                        openVideo(av.aid*1, av.title, true);
+                                    };
+                                    objectItem.onholdselect = function (e) {
+                                        openVideo(av.aid, av.title);
+                                    };
+                                    return objectItem;
+                                }));
                             }
+                        })
+                    }
+                })
 
-                            objectItem.description = `UP:${up}  T:${av.tname}`;
+                //加载土豪
+                ajax.get(`https://bangumi.bilibili.com/sponsor/rankweb/get_sponsor_week_list?season_id=${sid}&pagesize=7`,function (tuhao) {
+                    tuhao = jsonParse(tuhao);
+                    if(tuhao.code == 0){
+                        console.log("tuhao",tuhao);
+                        tuhao = tuhao.result;
+                        var tuhaoList = tuhao.list;
+
+                        var tuhaoSection = page.view.getElementById("tuhao");
+                        tuhaoSection.dataItem = new DataItem();
+                        tuhaoSection.dataItem.setPropertyPath("tuhao", tuhaoList.map((tuhao) => {
+                            let objectItem = new DataItem('tuhao', tuhao.uid);
+                            objectItem.cover = tuhao.face;
+                            objectItem.title = tuhao.uname;
                             objectItem.onselect = function (e) {
-                                openVideo(av.aid*1, av.title, true);
-                            };
-                            objectItem.onholdselect = function (e) {
-                                openVideo(av.aid, av.title);
+                                openUser(tuhao.uid);
                             };
                             return objectItem;
                         }));
                     }
                 })
-            }
-        }) 
+                //加载更多推荐
+                ajax.get(`https://bangumi.bilibili.com/web_api/season/recommend/${sid}.json`,function (more) {
+                    more = jsonParse(more);
+                    if(more.code == 0){
+                        // console.log("tuhao",more);
+                        more = more.result.list;
+                        var moreSection = page.view.getElementById("moreVideo");
+                        moreSection.dataItem = new DataItem();
+                        moreSection.dataItem.setPropertyPath("moreVideo", more.map((video) => {
+                            let objectItem = new DataItem('moreVideo', video.season_id);
+                            objectItem.cover = video.cover;
+                            objectItem.title = video.title;
+                            objectItem.onselect = function (e) {
+                                openBangumi(video.season_id);
+                            };
+                            return objectItem;
+                        }));
+                    }
+                })
 
-        //加载更多推荐  https://bangumi.bilibili.com/web_api/season/recommend/${sid}.json
-        ajax.get(`https://api.bilibili.com/pgc/web/recommend/related/recommend?season_id=${sid}&from_pc=1`,function (more) {
-            more = jsonParse(more);
-            if(more.code == 0){
-                more = more.result.season;
-                var moreSection = page.view.getElementById("moreVideo");
-                moreSection.dataItem = new DataItem();
-                moreSection.dataItem.setPropertyPath("moreVideo", more.map((video) => {
-                    let objectItem = new DataItem('moreVideo', video.season_id);
-                    objectItem.cover = video.cover;
-                    objectItem.title = video.title;
-                    objectItem.onselect = function (e) {
-                        openBangumi(video.season_id);
-                    };
-                    return objectItem;
-                }));
             }
-        })
-    }
+        }
+        eval(data);
     })
 }
-function openVideoList(title, pageProcessing, prototypes='') {
+function openVideoList(title,pageProcessing,prototypes='') {
     if(!prototypes)prototypes = `<lockup prototype="video">
     <img binding="@src:{cover};" width="200" height="300"/>
     <title binding="textContent:{title};" />
@@ -1029,7 +1087,7 @@ function openVideoList(title, pageProcessing, prototypes='') {
 
 
 
-function openVideo(aid, displayName=null, notAutoPlay=0, loadingView=null) {
+function openVideo(aid, displayName=null,notAutoPlay=0,loadingView=null) {
     var loading;
     if (loadingView) {
         loading = loadingView;
@@ -1060,7 +1118,7 @@ function openVideo(aid, displayName=null, notAutoPlay=0, loadingView=null) {
             return;
         }
 
-        if(notAutoPlay==0 && data.part.length == 1){ //直接到播放界面
+        if(notAutoPlay==0 && data.part.length == 1){
             loading.removeDocument();
             playVideo(data, 0, getQualityApiValue(getUserSettings("Video_Quality")));
             return;
@@ -1108,7 +1166,7 @@ function openVideo(aid, displayName=null, notAutoPlay=0, loadingView=null) {
                         <title>播放</title>
                     </buttonLockup>
                     <buttonLockup id="up_button">
-                        <badge src="resource://button-artist"/>
+                        <image src="resource://button-artist"/>
                         <title>${data.cardrich.name}</title>
                     </buttonLockup>
                 </row>
@@ -1159,9 +1217,9 @@ function initBar(){
         tvOS.element.menuItem('首页',function (e,menuItem) {
             
         }),
-        tvOS.element.menuItem('番剧',function (e,menuItem) {
+        tvOS.element.menuItem('追番',function (e,menuItem) {
             if(!menuItem.hasDocument){
-                timeline(function (v){
+                timeline(function (v) {
                     menuItem.setDocument(v);
                 });
             }
@@ -1390,8 +1448,20 @@ function changeVideoQuality(callback=function () {}) {
 
 
 function getAvData(id,page,cd){ 
-    var url = `https://www.bilibili.com/video/av${id}/?p=${page}`;
-    ajax.get(url, function (html) {
+    var url1 = `https://api.bilibili.com/x/player/pagelist?aid=${id}&jsonp=jsonp`;
+    var url2 = `https://www.bilibili.com/video/av${id}/?p=${page}`;
+    var cid = 0;
+    
+    ajax.get(url1, function (rec_data) {
+       var rec_data = jsonParse(rec_data);
+       if(rec_data.code == 0) {
+            var result = rec_data.data;
+            var pageContent = result[page - 1];
+            cid = pageContent.cid;
+       }
+    });
+
+    ajax.get(url2, function (html) {
        var isNoInfo = false;
        try{
             var playinfoJson = html
@@ -1432,7 +1502,8 @@ function getAvData(id,page,cd){
        const cardrich = upData;
        const data = {
         aid: id,
-        wb_full_url: url,
+        cid: cid,
+        wb_full_url: url2,
         wb_img: videoData.pic,
         wb_desc: videoData.title,
         wb_summary: videoData.desc,
@@ -1468,66 +1539,56 @@ evaluateScripts([tvBaseURL+'/tvOS2.js'], function (success) {
 
 function playVideo(infoData, page, quality=0)
 {
-    biliApiRequest(infoData.aid, infoData.part[page].cid, null, quality, false, false, function (detail){
-        openVideoWindow(infoData.aid, null, detail, infoData.wb_img, page, infoData.wb_desc, infoData.wb_desc);
+    biliApiRequest(infoData.aid, infoData.part[page].cid, quality, false, false, function (detail){
+        openVideoWindow(infoData.aid, detail, infoData.wb_img, page, infoData.wb_desc, infoData.wb_desc);
     }); 
 }
 
 function playBangumi(sid, videoInfo, quality=0)
 {
-        var epcid = videoInfo.cid;
-        var avid = videoInfo.aid;
-        var ep_id = videoInfo.id;
+    biliepRequest(sid, 1, function (epIndex){
+        var epcid = "";
+        epIndex.result.forEach(function (ep){
+            
+            console.log("EP信息");
+            console.log(ep);
+            
+            var tempIndex = parseInt(ep.index);
+            var tempTargetIndex = parseInt(videoInfo.index);
+            
+            if(tempIndex == tempTargetIndex)
+            {
+                epcid = ep.cid;
+            }
+        });
+        
         if(epcid === "")
         {
             Alert("无法加载此番剧","调用接口时返回了异常数据");
             return;
         }
-        biliApiRequest(avid, epcid, ep_id, quality, true, false, function (detail){
-            openVideoWindow(videoInfo.av_id, sid, detail, videoInfo.cover, videoInfo.index, videoInfo.index_title, `第 ${videoInfo.index} 话`, true);
+        
+        biliApiRequest(epcid, quality, true, false, function (detail){
+            openVideoWindow(videoInfo.av_id, detail, videoInfo.cover, videoInfo.index, videoInfo.index_title, `第 ${videoInfo.index} 话`, true);
         }); 
+    }); 
 }
 
-function openVideoWindow(aid, sid, detail, imageURL, page, title, desc, isBangumi = null)
+function openVideoWindow(aid, detail, imageURL, page, title, desc, isBangumi = null)
 {
         let videoList = new DMPlaylist();
-        let video = null;
-        if(isBangumi) {
-            try{
-                var base_url = detail.result.dash.video[0].base_url;
-            }catch(exception) {
-                displayError("播放失败","视频地址获取错误");
-                return;
-            }            
-            video = new DMMediaItem('video', base_url); 
-            video.url = base_url;
-            video.artworkImageURL = imageURL;
-            video.options = {
-                headers: {
-                    "User-Agent": 'ua',
-                    "referer": "https://www.bilibili.com/bangumi/play/ss" + sid
-                }
-            };
+        let video = new DMMediaItem('video', detail.data.dash.video[0].backup_url[0]); 
+        video.url = detail.data.dash.video[0].backup_url[0];
+        video.artworkImageURL = imageURL;
+        video.options = {headers:{
+            "User-Agent": ua,
+            "referer": "https://www.bilibili.com/video/av" + aid
+        }};
+        video.title = `P${page} - ${title}`;
+        if(isBangumi)
+        {
             video.title = `第 ${page} 话 - ${title}`;
-        } else {
-            try{
-                var base_url = detail.data.dash.video[0].base_url;
-            }catch(exception) {
-                displayError("播放失败","视频地址获取错误");
-                return;
-            }
-            video = new DMMediaItem('video', base_url); 
-            video.url = base_url;
-            video.artworkImageURL = imageURL;
-            video.options = {
-                headers: {
-                    "User-Agent": ua,
-                    "referer": "https://www.bilibili.com/video/av" + aid
-                }
-            };
-            video.title = `P${page} - ${title}`;
         }
-        
         video.description = desc;
         videoList.push(video);
         if(nowPlayer)nowPlayer.stop();
@@ -1543,7 +1604,7 @@ function openVideoWindow(aid, sid, detail, imageURL, page, title, desc, isBangum
 var api_url = 'https://api.bilibili.com/x/player/playurl?';  //http://interface.bilibili.com/v2/playurl?
 var bangumi_api_url = 'https://api.bilibili.com/pgc/player/web/playurl?';  //http://bangumi.bilibili.com/player/web_api/playurl?
 
-function biliApiRequest(avid, cid, ep_id, quality, bangumi = null, bangumi_movie = null, rd)
+function biliApiRequest(avid, cid, quality, bangumi = null, bangumi_movie = null, rd)
 {
     var ts = (new Date()).getTime().toString();
     var endTime = now.getSeconds(); //获取当前秒数
@@ -1551,12 +1612,13 @@ function biliApiRequest(avid, cid, ep_id, quality, bangumi = null, bangumi_movie
     var session = genMD5(deltaTime.toString());
     if(bangumi)
     {
-        var params_str = 'avid=' + avid + '&cid=' + cid + '&bvid=' + '&qn=' + quality + '&type' + 
-        '&otype=json' + '&ep_id=' + ep_id + '&fourk=1' + '&fnver=0' + '&fnval=16' + '&session=' + session;
-        var genApiUrl = bangumi_api_url + params_str;
+        var params_str = 'appkey=' + appkey + '&cid=' + cid + '&module=bangumi&otype=json&qn=' + quality + '&quality=' + quality + '&season_type=1&type=';
+        var chksum = genMD5(params_str+SEC1);
+        var genApiUrl = bangumi_api_url + params_str + '&sign=' + chksum;
+        
         var resultData = null;
-        ajax.get(genApiUrl,function (data) {
-            resultData = JSON.parse(data);
+        ajax.get(genApiUrl,function (html) {
+            resultData = JSON.parse(html);
             rd(resultData);
         });
     }
@@ -1564,7 +1626,8 @@ function biliApiRequest(avid, cid, ep_id, quality, bangumi = null, bangumi_movie
     {
         var params_str = 'avid=' + avid + '&cid=' + cid + '&bvid=' + '&qn=' + quality + '&type' + 
         '&otype=json' + '&fnver=0' + '&fnval=16' + '&session=' + session;
-        var genApiUrl = api_url + params_str;  
+        var genApiUrl = api_url + params_str;
+        
         var resultData = null;
         ajax.get(genApiUrl, function (data) {
             resultData = JSON.parse(data);
@@ -1573,6 +1636,14 @@ function biliApiRequest(avid, cid, ep_id, quality, bangumi = null, bangumi_movie
     }
 }
 
+function biliepRequest(sid, stype=1, rd)
+{
+    var ts = (new Date()).getTime().toString();
+    ajax.get("https://bangumi.bilibili.com/web_api/get_ep_list?season_id=" + sid + "&season_type=" + stype,function (html) {
+            resultData = JSON.parse(html);
+            rd(resultData);
+    });
+}
 
 function genMD5(value)
 {
